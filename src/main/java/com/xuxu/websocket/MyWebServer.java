@@ -1,7 +1,6 @@
 package com.xuxu.websocket;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -23,6 +22,10 @@ public class MyWebServer extends WebSocketServer implements InitializingBean {
 
     @Resource
     private SessionManager sessionManager;
+
+    @Resource
+    private ProtocolDispatcher protocolDispatcher;
+
 
     public MyWebServer(@Value("${server.web-port}") Integer port) {
         super(new InetSocketAddress(port));
@@ -47,9 +50,7 @@ public class MyWebServer extends WebSocketServer implements InitializingBean {
     @Override
     public void onMessage(WebSocket webSocket, String s) {
         log.info("onMessage, websocket:{}, msg:{}", webSocket, s);
-        if (StrUtil.equals(s, "abc")) {
-            webSocket.send("ef" + DateUtil.now());
-        }
+        protocolDispatcher.dispatch(webSocket, s);
     }
 
     @Override
@@ -65,4 +66,5 @@ public class MyWebServer extends WebSocketServer implements InitializingBean {
     public void afterPropertiesSet() {
         this.start();
     }
+
 }
