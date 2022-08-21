@@ -1,3 +1,7 @@
 server:
   port: 9999
   web-port: 9090
+
+client:
+  uri: ws://localhost:9090
+
